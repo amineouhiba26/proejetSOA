@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package ecommerce;
+
+service ProductService {
+  rpc GetProduct(ProductRequest) returns (ProductResponse) {}
+  rpc CheckProductStock(StockCheckRequest) returns (StockCheckResponse) {}
+}
+
+message ProductRequest {
+  string id = 1;
+}
+
+message ProductResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock = 5;
+}
+
+message StockCheckRequest {
+  repeated ProductQuantity products = 1;
+}
+
+message ProductQuantity {
+  string productId = 1;
+  int32 quantity = 2;
+}
+
+message StockCheckResponse {
+  bool available = 1;
+  repeated UnavailableProduct unavailableProducts = 2;
+}
+
+message UnavailableProduct {
+  string productId = 1;
+  string name = 2;
+  int32 availableQuantity = 3;
+  int32 requestedQuantity = 4;
+}
