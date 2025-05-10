@@ -17,11 +17,12 @@ module.exports = {
         }
     },
     grpc: {
+        host: process.env.GRPC_HOST || 'localhost',
         port: process.env.GRPC_PORT || 50051,
     },
     kafka: {
         clientId: 'ecommerce-app',
-        brokers: ['localhost:9092'],
+        brokers: process.env.KAFKA_BROKERS ? process.env.KAFKA_BROKERS.split(',') : ['localhost:9092'],
         topics: {
             orderEvents: 'order-events'
         }

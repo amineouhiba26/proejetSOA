@@ -18,7 +18,7 @@ const productService = protoDescriptor.ecommerce.ProductService;
 
 // Create gRPC client
 const client = new productService(
-    `localhost:${config.grpc.port}`,
+    `${config.grpc.host}:${config.grpc.port}`,
     grpc.credentials.createInsecure()
 );
 
