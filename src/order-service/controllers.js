@@ -36,7 +36,8 @@ exports.createOrder = async (req, res) => {
             orderProducts.push({
                 productId: item.productId,
                 quantity: item.quantity,
-                price: product.price
+                price: product.price , 
+                name: product.name
             });
             totalAmount += product.price * item.quantity;
         }

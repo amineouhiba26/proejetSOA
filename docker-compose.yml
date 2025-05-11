@@ -110,5 +110,30 @@ services:
       - product-service
       - order-service
       
+  notification-service:
+    build:
+      context: ./src/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - 3004:3004
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+      - KAFKA_TOPIC=order-events
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - PORT=3004
+      - HOST=0.0.0.0
+      - EMAIL_SERVICE=mailjet
+      - EMAIL_HOST=in-v3.mailjet.com
+      - EMAIL_PORT=587
+      - EMAIL_USER=018cd022d998484178167bd4e2ed76ae
+      - EMAIL_FROM=amine.ouhiba@polytechnicien.tn
+      - ADMIN_EMAIL=amibz2001@gmail.com
+      - EMAIL_PASSWORD=cc2e938b41484c50b9e995fbe1e94882
+    restart: always
+    depends_on:
+      - kafka
+      - auth-service
+      
 volumes:
   mongodb_data:
