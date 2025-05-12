@@ -1,21 +1,21 @@
 const config = require('./src/config');
 
-// Start all microservices
+
 const startServices = async () => {
-    // Auth Service
+
     require('./src/auth-service');
     console.log(`Auth service started on port ${config.services.auth.port}`);
     
-    // Product Service (with gRPC)
+
     require('./src/product-service');
     console.log(`Product service started on port ${config.services.product.port}`);
     console.log(`gRPC server started on port ${config.grpc.port}`);
     
-    // Order Service
+
     require('./src/order-service');
     console.log(`Order service started on port ${config.services.order.port}`);
     
-    // API Gateway (last to ensure all services are running)
+
     require('./src/api-gateway');
     console.log(`API Gateway started on port ${config.services.gateway.port}`);
     
@@ -46,7 +46,7 @@ const startServices = async () => {
     `);
 };
 
-// Update package.json scripts to make it easy to start
+
 const updatePackageJson = () => {
     const fs = require('fs');
     const path = require('path');

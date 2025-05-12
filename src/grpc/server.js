@@ -4,7 +4,7 @@ const path = require('path');
 const config = require('../config');
 const Product = require('../product-service/models');
 
-// Load proto file
+
 const PROTO_PATH = path.join(__dirname, 'proto/product.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
@@ -17,7 +17,7 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 const productService = protoDescriptor.ecommerce.ProductService;
 
-// Implement the gRPC service methods
+
 const getProduct = async (call, callback) => {
     try {
         const productId = call.request.id;
@@ -52,7 +52,7 @@ const checkProductStock = async (call, callback) => {
         const unavailableProducts = [];
         let allAvailable = true;
         
-        // Check each product's stock
+
         for (const item of productQuantities) {
             const product = await Product.findById(item.productId);
             
@@ -91,14 +91,14 @@ const checkProductStock = async (call, callback) => {
     }
 };
 
-// Create gRPC server
+
 const server = new grpc.Server();
 server.addService(productService.service, {
     getProduct,
     checkProductStock
 });
 
-// Start gRPC server
+
 const startGrpcServer = () => {
     server.bindAsync(
         `0.0.0.0:${config.grpc.port}`,

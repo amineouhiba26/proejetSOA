@@ -3,7 +3,7 @@ const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
 const config = require('../config');
 
-// Load proto file
+
 const PROTO_PATH = path.join(__dirname, 'proto/product.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
@@ -16,13 +16,13 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 const productService = protoDescriptor.ecommerce.ProductService;
 
-// Create gRPC client
+
 const client = new productService(
     `${config.grpc.host}:${config.grpc.port}`,
     grpc.credentials.createInsecure()
 );
 
-// Get product details
+
 const getProduct = (productId) => {
     return new Promise((resolve, reject) => {
         client.getProduct({ id: productId }, (error, response) => {
@@ -34,7 +34,7 @@ const getProduct = (productId) => {
     });
 };
 
-// Check if products are in stock
+
 const checkProductsStock = (products) => {
     return new Promise((resolve, reject) => {
         client.checkProductStock({ products }, (error, response) => {

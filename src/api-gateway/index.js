@@ -5,22 +5,22 @@ const bodyParser = require('body-parser');
 const config = require('../config');
 const { initConsumer } = require('../kafka/consumer');
 
-// Initialize express app
+
 const app = express();
 
-// Middleware
+
 app.use(cors());
 app.use(bodyParser.json());
 
-// Initialize Kafka consumer
+
 initConsumer();
 
-// Get service URLs from environment variables or default to localhost
+
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || `http://localhost:${config.services.auth.port}`;
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || `http://localhost:${config.services.product.port}`;
 const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || `http://localhost:${config.services.order.port}`;
 
-// Helper function to format URL for proxy
+
 const formatProxyUrl = (url) => {
     if (url.startsWith('http://') || url.startsWith('https://')) {
         return url.replace(/\/$/, ''); // Remove trailing slash if exists
@@ -28,34 +28,34 @@ const formatProxyUrl = (url) => {
     return `http://${url}`;
 };
 
-// Proxy routes to respective services
-// Auth Service
+
+
 app.use('/api/auth', proxy(formatProxyUrl(AUTH_SERVICE_URL), {
     proxyReqPathResolver: (req) => {
         return `/api/auth${req.url}`;
     }
 }));
 
-// Product Service (GraphQL)
+
 app.use('/api/graphql', proxy(formatProxyUrl(PRODUCT_SERVICE_URL), {
     proxyReqPathResolver: (req) => {
         return `/api/graphql`;
     }
 }));
 
-// Order Service
+
 app.use('/api/orders', proxy(formatProxyUrl(ORDER_SERVICE_URL), {
     proxyReqPathResolver: (req) => {
         return `/api/orders${req.url}`;
     }
 }));
 
-// Simple health check endpoint
+
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Start server
+
 const PORT = config.services.gateway.port;
 app.listen(PORT, () => {
     console.log(`API Gateway running on port ${PORT}`);

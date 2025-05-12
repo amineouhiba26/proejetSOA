@@ -3,7 +3,7 @@ const User = require('../auth-service/models');
 const grpcClient = require('../grpc/client');
 const kafkaProducer = require('../kafka/producer');
 
-// Create a new order
+
 exports.createOrder = async (req, res) => {
     const { products } = req.body;
     const userId = req.headers['user-id'];
@@ -58,7 +58,13 @@ exports.createOrder = async (req, res) => {
             orderId: order._id,
             username: order.username,
             status: order.status,
-            totalAmount: order.totalAmount
+            totalAmount: order.totalAmount,
+            product: orderProducts.map(p => ({
+                productId: p.productId,
+                quantity: p.quantity,
+                price: p.price,
+                name: p.name
+            }))
         });
     } catch (error) {
         console.error('Create order error:', error);
@@ -66,7 +72,7 @@ exports.createOrder = async (req, res) => {
     }
 };
 
-// ✅ Get orders for the logged-in user
+
 exports.getOrdersByUser = async (req, res) => {
     const userId = req.headers['user-id'];
 
@@ -83,7 +89,7 @@ exports.getOrdersByUser = async (req, res) => {
     }
 };
 
-// ✅ Admin-only: Get all orders of all users
+
 exports.getAllOrders = async (req, res) => {
     const userId = req.headers['user-id'];
     const role = req.headers['user-role'];
@@ -104,7 +110,7 @@ exports.getAllOrders = async (req, res) => {
     }
 };
 
-// Get order by ID
+
 exports.getOrderById = async (req, res) => {
     const { id } = req.params;
     const userId = req.headers['user-id'];
@@ -127,7 +133,7 @@ exports.getOrderById = async (req, res) => {
     }
 };
 
-// Update order status (admin only)
+
 exports.updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;

@@ -2,10 +2,10 @@ const { Kafka, Partitioners } = require('kafkajs');
 const config = require('../config');
 const net = require('net');
 
-// Flag to track Kafka availability
+
 let isKafkaConnected = false;
 
-// Check if Kafka is available before attempting to connect
+
 const checkKafkaAvailability = () => {
     return new Promise((resolve) => {
         const client = new net.Socket();
@@ -30,36 +30,36 @@ const checkKafkaAvailability = () => {
             resolve(false);
         });
         
-        // Parse broker string to get host and port
+
         const [host, port] = config.kafka.brokers[0].split(':');
         console.log(`Attempting to connect to Kafka at ${host}:${port}`);
         client.connect(parseInt(port), host);
     });
 };
 
-// Create Kafka producer if Kafka is available
+
 const initKafka = async () => {
     const isAvailable = await checkKafkaAvailability();
     
     if (!isAvailable) {
         console.log('Kafka is not available. Running without event streaming.');
-        // Retry connecting to Kafka in the background
+
         setTimeout(retryKafkaConnection, 5000);
         return;
     }
     
     try {
-        // Create Kafka client
+
         const kafka = new Kafka({
             clientId: config.kafka.clientId,
             brokers: config.kafka.brokers
         });
         
-        // Create admin client to ensure topics exist
+
         const admin = kafka.admin();
         await admin.connect();
         
-        // Create topics if they don't exist
+
         const existingTopics = await admin.listTopics();
         
         if (!existingTopics.includes(config.kafka.topics.orderEvents)) {
@@ -77,7 +77,7 @@ const initKafka = async () => {
         
         await admin.disconnect();
         
-        // Create producer with legacy partitioner to avoid warning
+
         const producer = kafka.producer({ 
             createPartitioner: Partitioners.LegacyPartitioner 
         });
@@ -86,7 +86,7 @@ const initKafka = async () => {
         isKafkaConnected = true;
         console.log('Kafka producer connected successfully');
         
-        // Attach the producer to module.exports
+
         module.exports.producer = producer;
     } catch (error) {
         console.log('Failed to initialize Kafka producer:', error.message);
@@ -95,24 +95,24 @@ const initKafka = async () => {
     }
 };
 
-// Function to retry connecting to Kafka
+
 const retryKafkaConnection = async () => {
     console.log('Retrying Kafka producer connection...');
     const isAvailable = await checkKafkaAvailability();
     
     if (isAvailable) {
         try {
-            // Create Kafka client
+
             const kafka = new Kafka({
                 clientId: config.kafka.clientId,
                 brokers: config.kafka.brokers
             });
             
-            // Create admin client to ensure topics exist
+
             const admin = kafka.admin();
             await admin.connect();
             
-            // Create topics if they don't exist
+
             const existingTopics = await admin.listTopics();
             
             if (!existingTopics.includes(config.kafka.topics.orderEvents)) {
@@ -130,7 +130,7 @@ const retryKafkaConnection = async () => {
             
             await admin.disconnect();
             
-            // Create producer with legacy partitioner to avoid warning
+
             const producer = kafka.producer({ 
                 createPartitioner: Partitioners.LegacyPartitioner 
             });
@@ -139,7 +139,7 @@ const retryKafkaConnection = async () => {
             isKafkaConnected = true;
             console.log('Kafka producer connected successfully after retry');
             
-            // Attach the producer to module.exports
+
             module.exports.producer = producer;
         } catch (error) {
             console.log('Failed to initialize Kafka producer after retry:', error.message);
@@ -151,7 +151,7 @@ const retryKafkaConnection = async () => {
     }
 };
 
-// Send order event
+
 const sendOrderEvent = async (eventType, orderData) => {
     if (!isKafkaConnected) {
         console.log(`[Kafka Disabled] Would have sent ${eventType} event for order ${orderData._id}`);

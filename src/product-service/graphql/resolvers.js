@@ -3,7 +3,7 @@ const User = require('../../auth-service/models');
 
 const resolvers = {
   Query: {
-    // Get all products
+
     products: async () => {
       try {
         const products = await Product.find();
@@ -14,7 +14,7 @@ const resolvers = {
       }
     },
     
-    // Get a single product by ID
+
     product: async (_, { id }) => {
       try {
         const product = await Product.findById(id);
@@ -27,14 +27,14 @@ const resolvers = {
   },
   
   Mutation: {
-    // Create a new product (admin only)
+
     createProduct: async (_, { name, description, price, stock }, context) => {
-      // Check if user is authenticated
+
       if (!context.userId) {
         throw new Error('Not authenticated');
       }
       
-      // Check if user is admin (using the pre-fetched role in context)
+
       if (!context.isAdmin) {
         throw new Error('Not authorized. Admin role required');
       }
@@ -55,14 +55,14 @@ const resolvers = {
       }
     },
     
-    // Update an existing product (admin only)
+
     updateProduct: async (_, { id, name, description, price, stock }, context) => {
-      // Check if user is authenticated
+
       if (!context.userId) {
         throw new Error('Not authenticated');
       }
       
-      // Check if user is admin (using the pre-fetched role in context)
+
       if (!context.isAdmin) {
         throw new Error('Not authorized. Admin role required');
       }
@@ -91,14 +91,14 @@ const resolvers = {
       }
     },
     
-    // Delete a product (admin only)
+
     deleteProduct: async (_, { id }, context) => {
-      // Check if user is authenticated
+
       if (!context.userId) {
         throw new Error('Not authenticated');
       }
       
-      // Check if user is admin (using the pre-fetched role in context)
+
       if (!context.isAdmin) {
         throw new Error('Not authorized. Admin role required');
       }

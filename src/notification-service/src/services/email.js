@@ -9,12 +9,12 @@ const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || 'cc2e938b41484c50b9e995fbe1
 const EMAIL_FROM = process.env.EMAIL_FROM || 'amine.ouhiba@polytechnicien.tn';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'amibz2001@gmail.com';
 
-// Create and verify email transporter
+
 const createTransporter = async () => {
     let transporterConfig = {};
     
     if (EMAIL_SERVICE === 'mailjet') {
-        // Mailjet configuration
+
         transporterConfig = {
             host: EMAIL_HOST,
             port: EMAIL_PORT,
@@ -26,7 +26,7 @@ const createTransporter = async () => {
         };
         logger.info('Using Mailjet SMTP configuration');
     } else if (EMAIL_SERVICE === 'gmail') {
-        // Gmail configuration
+
         transporterConfig = {
             service: 'gmail',
             auth: {
@@ -36,7 +36,7 @@ const createTransporter = async () => {
         };
         logger.info('Using Gmail configuration');
     } else {
-        // Default to Mailjet
+
         transporterConfig = {
             host: 'in-v3.mailjet.com',
             port: 587,
@@ -51,7 +51,7 @@ const createTransporter = async () => {
 
     const transporter = nodemailer.createTransport(transporterConfig);
 
-    // Verify connection configuration
+
     try {
         await transporter.verify();
         logger.info('Email transporter verified successfully');
@@ -62,7 +62,7 @@ const createTransporter = async () => {
     }
 };
 
-// Initialize the transporter (will be used as a singleton)
+
 let transporter = null;
 
 const initializeTransporter = async () => {
@@ -71,7 +71,7 @@ const initializeTransporter = async () => {
             transporter = await createTransporter();
         } catch (error) {
             logger.error('Failed to initialize email transporter');
-            // We'll retry later when sending emails
+
         }
     }
     return transporter;
@@ -88,7 +88,7 @@ const sendEmail = async (order) => {
     }
 
     try {
-        // Format the order data for the email
+
         const productDetails = order.products 
             ? order.products.map(p => `• ${p.name || p.productId} x ${p.quantity}`).join('\n')
             : 'No products';
@@ -105,7 +105,7 @@ const sendEmail = async (order) => {
     } catch (error) {
         logger.error(`Error sending email: ${error.message}`);
         
-        // If the error is authentication-related, try to reinitialize the transporter
+
         if (error.message.includes('auth') || error.message.includes('credentials')) {
             logger.info('Trying to reinitialize email transporter due to auth error');
             transporter = null;
